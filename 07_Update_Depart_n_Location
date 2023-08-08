@@ -1,0 +1,52 @@
+from pymongo import MongoClient
+
+client=MongoClient("mongodb+srv://nikebabariya:DiptiDB31@nikedb.ybbjxfd.mongodb.net/?retryWrites=true&w=majority")
+
+db=client["Office"]
+coll=db["workers"]
+print('connected to MongoDB cloud successfully')
+print('*'*40)
+print('this programme is about to accept ID, city and department. Update the document with new city and department of the worker ')
+print('*'*40)
+result = coll.find({},{"_id":1})
+agent_ids = [x["_id"] for x in result]
+
+print(agent_ids)
+print('*'*40)
+print('above ids are available with in collection ')
+print('*'*40)
+Eid=input('Enter workers ID : ')
+qr1={}
+qr1['_id']=Eid
+print('above enterted Id have below details to change')
+for doc in coll.find(qr1,{'dept': 1,'location': 1}):
+    print(doc)
+print('*'*40)
+print('From above data enter location as a city and dept as a department in below input')
+Loc=input('Enter city: ')
+Dep=input('Enter Department: ')
+
+qr={}
+qr['_id']=Eid
+qr['location']=Loc
+qr['dept']=Dep
+print('*'*40)
+newLoc=input('Enter new city: ')
+newDep=input('Enter new Department: ')
+ch={}
+ch['_id']=Eid
+ch['location']=newLoc
+ch['dept']=newDep
+
+upd={'$set':ch}
+
+coll.update_one(qr,upd)
+print('*'*40)
+print('Worker location and Department has been updated...')
+print('Here below is the finally updated data...')
+for doc in coll.find(ch,{'_id': 1, 'name': 1,
+                 'dept': 1, 'location': 1}):
+    
+    print(doc)
+print('*'*40)
+print('if document is not printed above this line means consider it is not updated yet because of invalid inputs...')
